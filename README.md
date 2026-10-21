@@ -45,25 +45,33 @@ Aplikasi ini dibangun menggunakan arsitektur modern berbasis TypeScript dan Vite
 
 ## 🔄 Alur Proses Bisnis & State Machine
 
-Siklus pengajuan kredit kendaraan bermotor bergerak mengikuti diagram alur berikut:
+Siklus pengajuan kredit kendaraan bermotor bergerak mengikuti alur terstruktur berikut:
 
 ```mermaid
 flowchart TD
-    Draft([1. Draft Dealer]) -->|Sales Dealer Unggah KTP, SPK, Bukti Bayar| ACC_Pembeli[2. Menunggu ACC Pembeli]
-    ACC_Pembeli -->|Konsumen Meninjau & Klik ACC Data| Submit_Mkt[3. Menunggu Submit Marketing]
-    Submit_Mkt -->|Marketing Mengisi Data Lengkap & Kredit| Review_Atasan[4. Menunggu Approval Atasan]
-    
-    Review_Atasan -->|Atasan Marketing Reject| Ditolak([Ditolak])
-    Review_Atasan -->|Atasan Marketing Approve & Terbitkan PO| Upload_TTD[5. Menunggu Upload TTD]
-    
-    Upload_TTD -->|Pembeli Upload TTD & Dealer Upload TTD| Final_ACC[6. Menunggu Final ACC Marketing]
-    Final_ACC -->|Marketing Melakukan Final ACC Dokumen| Selesai[7. Selesai - Pencairan]
-    Selesai -->|Admin Backoffice Eksekusi Pencairan| Cair([8. Dana Tercairkan])
+    A["1. Form Pengajuan Baru<br/>(Pembeli Input Data & Upload Berkas)"]
+    B["2. Menunggu ACC Penjual<br/>(Verifikasi Sales Dealer/Penjual)"]
+    C["3. Menunggu Submit Marketing<br/>(Marketing Lengkapi Data Kredit)"]
+    D["4. Menunggu Approval Atasan<br/>(Review Kelayakan & Hitung Pokok)"]
+    E["5. Menunggu Upload TTD<br/>(Dual Signature: Pembeli & Penjual)"]
+    F["6. Menunggu Final ACC Marketing<br/>(Validasi Kelengkapan Berkas & TTD)"]
+    G["7. Selesai - Pencairan<br/>(Verifikasi Dokumen PO & Siap Cair)"]
+    H["8. Dana Tercairkan"]
+    X["Ditolak"]
 
-    classDef success fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
-    classDef reject fill:#fee2e2,stroke:#dc2626,stroke-width:2px;
-    class Cair success;
-    class Ditolak reject;
+    A -->|Submit Berkas| B
+    B -->|ACC Penjual| C
+    C -->|Kirim ke Atasan| D
+    D -->|Approve & Terbitkan PO| E
+    D -->|Reject| X
+    E -->|Dual TTD Selesai| F
+    F -->|Final ACC Dokumen| G
+    G -->|Eksekusi Pencairan| H
+
+    classDef success fill:#14532d,stroke:#22c55e,color:#ffffff;
+    classDef reject fill:#7f1d1d,stroke:#ef4444,color:#ffffff;
+    class H success;
+    class X reject;
 ```
 
 ---
@@ -72,17 +80,18 @@ flowchart TD
 
 Di bilah atas (*header*) aplikasi terdapat dropdown **"Login As"** untuk berganti peran secara langsung:
 
-### 1. 🏢 Sales Dealer
-* **Tabel Pengajuan:** Melihat semua pengajuan yang diajukan oleh dealer.
-* **Buat Pengajuan Baru:** Formulir input Nama Konsumen beserta simulasi unggah dokumen wajib:
+### 1. 👤 Pembeli (Konsumen)
+* **Buat Pengajuan Baru:** Formulir input Nama Pembeli/Pemohon beserta dummy unggah berkas persyaratan:
   * File KTP Konsumen (`.pdf`)
   * Dokumen SPK (Surat Pemesanan Kendaraan)
-  * Bukti Pembayaran Uang Tanda Jadi (*Booking Fee*)
-* **Upload TTD Dealer:** Melakukan tanda tangan digital dealer saat memasuki tahap penandatanganan PO.
+  * Bukti Pembayaran Tanda Jadi (*Booking Fee*)
+* **Submit Berkas:** Mengirimkan pengajuan ke pihak penjual/dealer (Status: *"Menunggu ACC Penjual"*).
+* **Upload TTD Pembeli:** Menandatangani berkas persetujuan pembiayaan secara digital setelah nomor PO diterbitkan.
 
-### 2. 👤 Pembeli (Konsumen)
-* **Verifikasi Data Awal:** Meninjau kelengkapan dokumen yang diinput oleh dealer dan menekan **"Lihat Data & ACC"**.
-* **Upload TTD Konsumen:** Menandatangani berkas persetujuan pembiayaan setelah nomor PO diterbitkan.
+### 2. 🏢 Sales Dealer (Penjual)
+* **Tabel Pengajuan Dealer:** Menampilkan daftar pengajuan kredit yang masuk dari pembeli.
+* **Verifikasi & ACC Pengajuan:** Membuka detail dokumen yang diunggah pembeli (**"Lihat Data & ACC"**) dan menyetujui berkas untuk diproses ke divisi marketing (Status: *"Menunggu Submit Marketing"*).
+* **Upload TTD Penjual:** Melakukan tanda tangan digital pihak dealer/penjual saat tahap PO.
 
 ### 3. 👔 Marketing
 * **Lengkapi Data Kredit:** Menginput informasi komprehensif:
@@ -109,18 +118,18 @@ Di bilah atas (*header*) aplikasi terdapat dropdown **"Login As"** untuk bergant
 Anda dapat menguji seluruh alur bisnis dari awal sampai akhir hanya dalam waktu 2 menit dengan skenario berikut:
 
 ```text
-[Langkah 1: Sales Dealer]
+[Langkah 1: Pembeli]
 1. Buka website https://vagrantassassin.github.io/bca-auto-finance-flow/
-2. Pastikan role pada dropdown adalah "Sales Dealer".
+2. Pastikan role pada dropdown adalah "Pembeli".
 3. Klik tombol "+ Buat Pengajuan Baru".
-4. Masukkan Nama Konsumen (contoh: "Ahmad Dahlan").
+4. Masukkan Nama Pembeli/Konsumen (contoh: "Ahmad Dahlan").
 5. Klik tombol "Upload" pada KTP, SPK, dan Bukti Bayar.
-6. Klik "Submit ke Pembeli". Status menjadi "Menunggu ACC Pembeli".
+6. Klik "Submit ke Penjual / Dealer". Status menjadi "Menunggu ACC Penjual".
 
-[Langkah 2: Pembeli]
-7. Ubah dropdown role menjadi "Pembeli".
+[Langkah 2: Sales Dealer (Penjual)]
+7. Ubah dropdown role menjadi "Sales Dealer (Penjual)".
 8. Pada baris data pengajuan tadi, klik tombol "Lihat Data & ACC".
-9. Periksa ringkasan berkas, lalu klik "ACC Data". Status berubah ke "Menunggu Submit Marketing".
+9. Periksa ringkasan berkas, lalu klik "ACC Pengajuan". Status berubah ke "Menunggu Submit Marketing".
 
 [Langkah 3: Marketing]
 10. Ubah dropdown role menjadi "Marketing".
@@ -134,8 +143,8 @@ Anda dapat menguji seluruh alur bisnis dari awal sampai akhir hanya dalam waktu 
 16. Klik tombol "Approve & Generate PO". Status berubah menjadi "Menunggu Upload TTD" dan nomor PO dibuat.
 
 [Langkah 5: Tanda Tangan Dokumen (Dual Party)]
-17. Ubah role ke "Pembeli" -> klik tombol "Upload TTD".
-18. Ubah role ke "Sales Dealer" -> klik tombol "Upload TTD Dealer".
+17. Ubah role ke "Pembeli" -> klik tombol "Upload TTD Pembeli".
+18. Ubah role ke "Sales Dealer (Penjual)" -> klik tombol "Upload TTD Penjual".
 19. Begitu kedua pihak selesai mengunggah TTD, status otomatis naik menjadi "Menunggu Final ACC Marketing".
 
 [Langkah 6: Finalisasi & Pencairan]

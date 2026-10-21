@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const KEY = "jkl-pengajuan-v1";
+const KEY = "jkl-pengajuan-v2";
 const selectCls = "h-9 w-full rounded-md border border-input bg-background px-3 text-sm";
 
 function statusBadge(s: Status, cair?: boolean) {
@@ -36,7 +36,7 @@ function statusBadge(s: Status, cair?: boolean) {
 function Index() {
   const [data, setData] = useState<Pengajuan[]>(SEED);
   const [loaded, setLoaded] = useState(false);
-  const [role, setRole] = useState<Role>("Sales Dealer");
+  const [role, setRole] = useState<Role>("Pembeli");
   const [modal, setModal] = useState<{ type: string; id?: string } | null>(null);
 
   useEffect(() => {
@@ -67,16 +67,16 @@ function Index() {
 
   const actions = (p: Pengajuan): ReactNode => {
     const s = p.status;
-    if (role === "Sales Dealer") {
-      if (s === "Menunggu Upload TTD")
-        return p.ttdDealer ? <span className="text-xs text-muted-foreground">TTD Dealer ✓</span> :
-          <Button size="sm" onClick={() => update(p.id, (x) => applyTtd(x, "dealer"))}>Upload TTD Dealer</Button>;
-    }
     if (role === "Pembeli") {
-      if (s === "Menunggu ACC Pembeli") return <Button size="sm" onClick={() => setModal({ type: "acc", id: p.id })}>Lihat Data & ACC</Button>;
       if (s === "Menunggu Upload TTD")
         return p.ttdPembeli ? <span className="text-xs text-muted-foreground">TTD Pembeli ✓</span> :
-          <Button size="sm" onClick={() => update(p.id, (x) => applyTtd(x, "pembeli"))}>Upload TTD</Button>;
+          <Button size="sm" onClick={() => update(p.id, (x) => applyTtd(x, "pembeli"))}>Upload TTD Pembeli</Button>;
+    }
+    if (role === "Sales Dealer (Penjual)") {
+      if (s === "Menunggu ACC Penjual") return <Button size="sm" onClick={() => setModal({ type: "acc", id: p.id })}>Lihat Data & ACC</Button>;
+      if (s === "Menunggu Upload TTD")
+        return p.ttdDealer ? <span className="text-xs text-muted-foreground">TTD Penjual ✓</span> :
+          <Button size="sm" onClick={() => update(p.id, (x) => applyTtd(x, "dealer"))}>Upload TTD Penjual</Button>;
     }
     if (role === "Marketing") {
       if (s === "Menunggu Submit Marketing") return <Button size="sm" onClick={() => setModal({ type: "lengkapi", id: p.id })}>Lengkapi Data</Button>;
@@ -138,7 +138,7 @@ function Index() {
                   role === "Admin Backoffice" ? "Pengajuan siap dicairkan." : "Daftar pengajuan kredit."}
               </CardDescription>
             </div>
-            {role === "Sales Dealer" && <Button onClick={() => setModal({ type: "baru" })}>+ Buat Pengajuan Baru</Button>}
+            {role === "Pembeli" && <Button onClick={() => setModal({ type: "baru" })}>+ Buat Pengajuan Baru</Button>}
           </CardHeader>
           <CardContent>
             <Table>
@@ -165,7 +165,7 @@ function Index() {
                     <TableCell>
                       {statusBadge(p.status, p.tercairkan)}
                       {p.status === "Menunggu Upload TTD" && (
-                        <div className="mt-1 text-[11px] text-muted-foreground">Pembeli {p.ttdPembeli ? "✓" : "✗"} · Dealer {p.ttdDealer ? "✓" : "✗"}</div>
+                        <div className="mt-1 text-[11px] text-muted-foreground">Pembeli {p.ttdPembeli ? "✓" : "✗"} · Penjual {p.ttdDealer ? "✓" : "✗"}</div>
                       )}
                     </TableCell>
                     <TableCell>{actions(p)}</TableCell>
@@ -182,17 +182,17 @@ function Index() {
           {modal?.type === "baru" && (
             <BaruForm onSubmit={(nama, dok) => {
               const id = `KR-${String(data.length + 1).padStart(4, "0")}-${Date.now().toString().slice(-3)}`;
-              setData((d) => [...d, { id, namaKonsumen: nama, dokumen: dok, status: "Menunggu ACC Pembeli", ttdPembeli: false, ttdDealer: false, tercairkan: false, createdAt: new Date().toISOString().slice(0, 10) }]);
+              setData((d) => [...d, { id, namaKonsumen: nama, dokumen: dok, status: "Menunggu ACC Penjual", ttdPembeli: false, ttdDealer: false, tercairkan: false, createdAt: new Date().toISOString().slice(0, 10) }]);
               close();
             }} />
           )}
           {modal?.type === "acc" && current && (
             <>
-              <DialogHeader><DialogTitle>Konfirmasi Data Pengajuan</DialogTitle></DialogHeader>
-              <Info rows={[["No. Pengajuan", current.id], ["Nama", current.namaKonsumen], ["KTP", current.dokumen.ktp ? "Terupload" : "-"], ["SPK", current.dokumen.spk ? "Terupload" : "-"], ["Bukti Tanda Jadi", current.dokumen.buktiBayar ? "Terupload" : "-"]]} />
+              <DialogHeader><DialogTitle>Verifikasi & ACC Pengajuan Konsumen</DialogTitle></DialogHeader>
+              <Info rows={[["No. Pengajuan", current.id], ["Nama Konsumen", current.namaKonsumen], ["KTP", current.dokumen.ktp ? "Terupload" : "-"], ["SPK", current.dokumen.spk ? "Terupload" : "-"], ["Bukti Tanda Jadi", current.dokumen.buktiBayar ? "Terupload" : "-"]]} />
               <DialogFooter>
                 <Button variant="outline" onClick={close}>Batal</Button>
-                <Button onClick={() => { update(current.id, (x) => ({ ...x, status: "Menunggu Submit Marketing" })); close(); }}>ACC Data</Button>
+                <Button onClick={() => { update(current.id, (x) => ({ ...x, status: "Menunggu Submit Marketing" })); close(); }}>ACC Pengajuan</Button>
               </DialogFooter>
             </>
           )}
@@ -269,7 +269,7 @@ function POView({ p }: { p: Pengajuan }) {
       <div>Pokok Hutang  : {rupiah((d?.harga ?? 0) - (d?.dp ?? 0))}</div>
       <div>Tenor         : {d?.tenor} bulan · Asuransi {d?.asuransi}</div>
       <p className="mt-4">Dengan ini PT JKL menyatakan menyetujui pembiayaan kendaraan tersebut di atas dan meminta dealer untuk melakukan penyerahan unit kepada konsumen. Dokumen telah ditandatangani oleh Konsumen dan Dealer.</p>
-      <div className="mt-6 flex justify-between"><span>TTD Konsumen: ✓</span><span>TTD Dealer: ✓</span><span>Marketing: ✓</span></div>
+      <div className="mt-6 flex justify-between"><span>TTD Pembeli: ✓</span><span>TTD Penjual: ✓</span><span>Marketing: ✓</span></div>
     </div>
   );
 }
@@ -281,9 +281,9 @@ function BaruForm({ onSubmit }: { onSubmit: (nama: string, dok: Pengajuan["dokum
   const ok = nama.trim() && dok.ktp && dok.spk && dok.buktiBayar;
   return (
     <>
-      <DialogHeader><DialogTitle>Buat Pengajuan Baru</DialogTitle></DialogHeader>
+      <DialogHeader><DialogTitle>Form Pengajuan Kredit (Pembeli)</DialogTitle></DialogHeader>
       <div className="space-y-4">
-        <div className="space-y-1"><Label>Nama Konsumen</Label><Input value={nama} onChange={(e) => setNama(e.target.value)} placeholder="cth. Siti Rahayu" /></div>
+        <div className="space-y-1"><Label>Nama Pembeli / Pemohon</Label><Input value={nama} onChange={(e) => setNama(e.target.value)} placeholder="cth. Siti Rahayu" /></div>
         {items.map(([k, l]) => (
           <div key={k} className="flex items-center justify-between rounded-md border p-3">
             <span className="text-sm">{l}</span>
@@ -293,7 +293,7 @@ function BaruForm({ onSubmit }: { onSubmit: (nama: string, dok: Pengajuan["dokum
         ))}
       </div>
       <DialogFooter>
-        <Button disabled={!ok} onClick={() => onSubmit(nama.trim(), dok)}>Submit ke Pembeli</Button>
+        <Button disabled={!ok} onClick={() => onSubmit(nama.trim(), dok)}>Submit ke Penjual / Dealer</Button>
       </DialogFooter>
     </>
   );

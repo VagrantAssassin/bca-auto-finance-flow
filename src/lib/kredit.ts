@@ -1,6 +1,6 @@
 export const STATUSES = [
-  "Draft Dealer",
-  "Menunggu ACC Pembeli",
+  "Draft Pembeli",
+  "Menunggu ACC Penjual",
   "Menunggu Submit Marketing",
   "Menunggu Approval Atasan",
   "Menunggu Upload TTD",
@@ -9,7 +9,7 @@ export const STATUSES = [
 ] as const;
 export type Status = (typeof STATUSES)[number] | "Ditolak";
 
-export const ROLES = ["Sales Dealer", "Pembeli", "Marketing", "Atasan Marketing", "Admin Backoffice"] as const;
+export const ROLES = ["Pembeli", "Sales Dealer (Penjual)", "Marketing", "Atasan Marketing", "Admin Backoffice"] as const;
 export type Role = (typeof ROLES)[number];
 
 export interface Detail {
@@ -36,7 +36,7 @@ export const SEED: Pengajuan[] = [
     id: "KR-0001",
     namaKonsumen: "Budi Santoso",
     dokumen: { ktp: true, spk: true, buktiBayar: true },
-    status: "Menunggu ACC Pembeli",
+    status: "Menunggu ACC Penjual",
     ttdPembeli: false,
     ttdDealer: false,
     tercairkan: false,
