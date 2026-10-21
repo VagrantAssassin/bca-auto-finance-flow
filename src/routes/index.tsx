@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -228,7 +228,7 @@ function Index() {
 function Info({ rows }: { rows: [string, ReactNode][] }) {
   return (
     <dl className="grid grid-cols-[180px_1fr] gap-y-2 text-sm">
-      {rows.map(([k, v]) => (<><dt key={k + "k"} className="text-muted-foreground">{k}</dt><dd key={k + "v"} className="font-medium">{v}</dd></>))}
+      {rows.map(([k, v]) => (<Fragment key={k}><dt className="text-muted-foreground">{k}</dt><dd className="font-medium">{v}</dd></Fragment>))}
     </dl>
   );
 }
@@ -299,11 +299,14 @@ function BaruForm({ onSubmit }: { onSubmit: (nama: string, dok: Pengajuan["dokum
   );
 }
 
+function F({ l, children }: { l: string; children: ReactNode }) {
+  return <div className="space-y-1"><Label className="text-xs">{l}</Label>{children}</div>;
+}
+
 function LengkapiForm({ nama, onSubmit }: { nama: string; onSubmit: (d: Detail) => void }) {
   const [d, setD] = useState<Detail>({ nik: "", tglLahir: "", statusNikah: "Belum Menikah", merk: "", tipe: "", warna: "", harga: 0, dp: 0, tenor: 36, asuransi: "All Risk" });
   const set = <K extends keyof Detail>(k: K, v: Detail[K]) => setD({ ...d, [k]: v });
   const ok = d.nik.length >= 16 && d.tglLahir && d.merk && d.tipe && d.warna && d.harga > 0 && d.dp > 0 && d.dp < d.harga;
-  const F = ({ l, children }: { l: string; children: ReactNode }) => <div className="space-y-1"><Label className="text-xs">{l}</Label>{children}</div>;
   return (
     <>
       <DialogHeader><DialogTitle>Lengkapi Data – {nama}</DialogTitle></DialogHeader>
