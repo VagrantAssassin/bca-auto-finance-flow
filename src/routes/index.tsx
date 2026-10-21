@@ -12,10 +12,10 @@ import { ROLES, SEED, STATUSES, applyTtd, rupiah, type Detail, type Pengajuan, t
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "BCA Finance – Sistem Pengajuan Kredit Kendaraan" },
-      { name: "description", content: "Demo alur pengajuan kredit kendaraan bermotor BCA Finance antar role." },
-      { property: "og:title", content: "BCA Finance – Sistem Pengajuan Kredit Kendaraan" },
-      { property: "og:description", content: "Demo alur pengajuan kredit kendaraan bermotor BCA Finance antar role." },
+      { title: "PT JKL – Sistem Pengajuan Kredit Kendaraan" },
+      { name: "description", content: "Demo alur pengajuan kredit kendaraan bermotor PT JKL antar role." },
+      { property: "og:title", content: "PT JKL – Sistem Pengajuan Kredit Kendaraan" },
+      { property: "og:description", content: "Demo alur pengajuan kredit kendaraan bermotor PT JKL antar role." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const KEY = "bcaf-pengajuan-v1";
+const KEY = "jkl-pengajuan-v1";
 const selectCls = "h-9 w-full rounded-md border border-input bg-background px-3 text-sm";
 
 function statusBadge(s: Status, cair?: boolean) {
@@ -101,9 +101,9 @@ function Index() {
       <header className="bg-header text-header-foreground shadow">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-background text-lg font-bold text-primary">B</div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-background text-sm font-extrabold tracking-wider text-primary">JKL</div>
             <div>
-              <div className="text-lg font-bold tracking-wide">BCA Finance</div>
+              <div className="text-lg font-bold tracking-wide">PT JKL</div>
               <div className="text-xs opacity-80">Sistem Pengajuan Kredit Kendaraan Bermotor</div>
             </div>
           </div>
@@ -206,7 +206,7 @@ function Index() {
               <DialogFooter>
                 <Button variant="destructive" onClick={() => { update(current.id, (x) => ({ ...x, status: "Ditolak" })); close(); }}>Reject</Button>
                 <Button onClick={() => {
-                  update(current.id, (x) => ({ ...x, status: "Menunggu Upload TTD", noPO: `PO/BCAF/${new Date().getFullYear()}/${Math.floor(100000 + Math.random() * 900000)}` }));
+                  update(current.id, (x) => ({ ...x, status: "Menunggu Upload TTD", noPO: `PO/JKL/${new Date().getFullYear()}/${Math.floor(100000 + Math.random() * 900000)}` }));
                   close();
                 }}>Approve & Generate PO</Button>
               </DialogFooter>
@@ -258,7 +258,7 @@ function POView({ p }: { p: Pengajuan }) {
   const d = p.detail;
   return (
     <div className="rounded-md border bg-muted p-6 font-mono text-xs leading-relaxed">
-      <div className="text-center text-sm font-bold">PT BCA FINANCE</div>
+      <div className="text-center text-sm font-bold">PT JKL</div>
       <div className="mb-4 text-center">SURAT PERSETUJUAN PEMBIAYAAN / PURCHASE ORDER</div>
       <div>No. PO        : {p.noPO ?? "-"}</div>
       <div>No. Pengajuan : {p.id}</div>
@@ -268,7 +268,7 @@ function POView({ p }: { p: Pengajuan }) {
       <div>Uang Muka     : {rupiah(d?.dp ?? 0)}</div>
       <div>Pokok Hutang  : {rupiah((d?.harga ?? 0) - (d?.dp ?? 0))}</div>
       <div>Tenor         : {d?.tenor} bulan · Asuransi {d?.asuransi}</div>
-      <p className="mt-4">Dengan ini PT BCA Finance menyatakan menyetujui pembiayaan kendaraan tersebut di atas dan meminta dealer untuk melakukan penyerahan unit kepada konsumen. Dokumen telah ditandatangani oleh Konsumen dan Dealer.</p>
+      <p className="mt-4">Dengan ini PT JKL menyatakan menyetujui pembiayaan kendaraan tersebut di atas dan meminta dealer untuk melakukan penyerahan unit kepada konsumen. Dokumen telah ditandatangani oleh Konsumen dan Dealer.</p>
       <div className="mt-6 flex justify-between"><span>TTD Konsumen: ✓</span><span>TTD Dealer: ✓</span><span>Marketing: ✓</span></div>
     </div>
   );

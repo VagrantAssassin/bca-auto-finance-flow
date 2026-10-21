@@ -1,4 +1,4 @@
-# 🚗 BCA Auto Finance Flow
+# 🚗 PT JKL – Auto Finance Flow
 
 <div align="center">
 
@@ -20,9 +20,9 @@
 
 ## 📌 Tentang Proyek
 
-**BCA Auto Finance Flow** adalah aplikasi web simulasi bisnis (*Single Page Application*) yang merepresentasikan siklus penuh (**End-to-End**) proses pengajuan kredit kendaraan bermotor pada **PT BCA Finance**. 
+**PT JKL Auto Finance Flow** adalah aplikasi web simulasi bisnis (*Single Page Application*) yang merepresentasikan siklus penuh (**End-to-End**) proses pengajuan kredit kendaraan bermotor pada **PT JKL**. 
 
-Aplikasi ini dirancang dengan gaya antarmuka korporat (*BCA Corporate Blue & Clean White*), dilengkapi sistem transisi status terintegrasi (*Finite State Machine*), simulasi tanda tangan dokumen digital (*dual-party digital signature*), pencetakan *Purchase Order* (PO) otomatis, serta fitur **Role Switcher** instan tanpa autentikasi rumit agar siap digunakan untuk kebutuhan demo, verifikasi alur, maupun presentasi stakeholder bisnis.
+Aplikasi ini dirancang dengan gaya antarmuka korporat (*Corporate Blue & Clean White*), dilengkapi sistem transisi status terintegrasi (*Finite State Machine*), simulasi tanda tangan dokumen digital (*dual-party digital signature*), pencetakan *Purchase Order* (PO) otomatis, serta fitur **Role Switcher** instan tanpa autentikasi rumit agar siap digunakan untuk kebutuhan demo, verifikasi alur, maupun presentasi stakeholder bisnis.
 
 ---
 
@@ -95,11 +95,11 @@ Di bilah atas (*header*) aplikasi terdapat dropdown **"Login As"** untuk bergant
 ### 4. 🎖️ Atasan Marketing
 * **Review Kelayakan:** Meninjau seluruh rekapitulasi data konsumen, data unit kendaraan, dan skema pembiayaan.
 * **Keputusan Approval:**
-  * **Approve & Generate PO:** Otomatis menerbitkan nomor Surat Purchase Order resmi (`PO/BCAF/YYYY/XXXXXX`).
+  * **Approve & Generate PO:** Otomatis menerbitkan nomor Surat Purchase Order resmi (`PO/JKL/YYYY/XXXXXX`).
   * **Reject:** Menolak pengajuan kredit (status berubah menjadi *Ditolak*).
 
 ### 5. 🏛️ Admin Backoffice
-* **Pratinjau Dokumen PO Resmi:** Membuka cetakan teks formal Purchase Order PT BCA Finance dengan rincian klausul persetujuan.
+* **Pratinjau Dokumen PO Resmi:** Membuka cetakan teks formal Purchase Order PT JKL dengan rincian klausul persetujuan.
 * **Eksekusi Pencairan Dana:** Menyelesaikan proses transaksi keuangan; baris data otomatis ditandai hijau terang (*Tercairkan*).
 
 ---
